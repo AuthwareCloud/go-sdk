@@ -55,9 +55,9 @@ func newClient() *http.Client {
 					return nil
 				},
 			},
-			TLSHandshakeTimeout:   10,
-			ResponseHeaderTimeout: 10,
-			ExpectContinueTimeout: 10,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ResponseHeaderTimeout: 10 * time.Second,
+			ExpectContinueTimeout: 10 * time.Second,
 		},
 		Timeout: 10 * time.Second,
 	}
