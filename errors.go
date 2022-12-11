@@ -7,4 +7,5 @@ var (
 	BadIdConfiguration         = fmt.Errorf("invalid application configuration, ensure you set the ID and version before calling InitializeApplication")                                                                                                                                    // BadConfiguration is thrown when calling a function with bad data such as a missing ID or version string
 	BadHardwareIdConfiguration = fmt.Errorf("invalid application configuration, ensure that you set the HardwareIdentifierFunc to a valid hardware ID fetching function. if you do not want to validate hardware IDs then you need to disable the functionality on the authware dashboard") // BadHardwareIdConfiguration is thrown when the HardwareIdentifierFunc is not set when the application is configured to check user hardware IDs
 	AppNotInitialized          = fmt.Errorf("the application must be initialized before calling this function, you can initialize it by calling InitializeApplication")
+	AppAlreadyInitialized      = fmt.Errorf("application already initialized") // AppAlreadyInitialized is thrown when InitializeApplication is called when the app is already initialized
 )

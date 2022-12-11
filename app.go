@@ -20,14 +20,18 @@ type Application struct {
 }
 
 // InitializeApplication will gather the detailed information about the app and get it ready for usage with Authware, it is mandatory that you call this method before you use any Authware API call
-func (a Application) InitializeApplication() error {
+func (a *Application) InitializeApplication() error {
+	if a.initialized {
+		return AppAlreadyInitialized
+	}
+
 	// Ensure that the app details are valid
 	if a.Id == "" || a.Version == "" {
 		return BadIdConfiguration
 	}
 
 	// set http backing app
-	addApplication(&a)
+	addApplication(a)
 
 	// Make the request to get app info
 	app, err := doRequest[backingApp](http.MethodPost, "app", initForm{Id: a.Id})
@@ -49,12 +53,12 @@ func (a Application) InitializeApplication() error {
 	a.initialized = true
 
 	// reset after done
-	addApplication(&a)
+	addApplication(a)
 
 	return nil
 }
 
-func (a Application) Authenticate(username string, password string) error {
+func (a *Application) Authenticate(username string, password string) error {
 	// Ensure the app is initialized
 	if !a.initialized {
 		return AppNotInitialized
@@ -75,7 +79,7 @@ func (a Application) Authenticate(username string, password string) error {
 	return nil
 }
 
-func (a Application) Register(username string, password string, email string, token string) error {
+func (a *Application) Register(username string, password string, email string, token string) error {
 	// Ensure the app is initialized
 	if !a.initialized {
 		return AppNotInitialized
