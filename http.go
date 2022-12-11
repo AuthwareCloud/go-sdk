@@ -97,29 +97,29 @@ func newRequest(method string, url string, body []byte) (req *http.Request, err 
 // doRequest will take in the URL, request method and body, create a request and send it to the Authware API
 func doRequest[T any](method string, url string, body any) (resp *T, err error) {
 	// Serialize and create the body
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		return
+	bodyBytes, jErr := json.Marshal(body)
+	if jErr != nil {
+		return nil, jErr
 	}
 
-	req, err := newRequest(method, url, bodyBytes)
-	if err != nil {
-		return
+	req, rErr := newRequest(method, url, bodyBytes)
+	if rErr != nil {
+		return nil, rErr
 	}
 
 	// Make the request
-	rawResp, err := client.Do(req)
-	if err != nil {
-		return
+	rawResp, cErr := client.Do(req)
+	if cErr != nil {
+		return nil, cErr
 	}
 
 	// Defer closing the body
 	defer rawResp.Body.Close()
 
 	// Read all the bytes in the body
-	respBytes, err := io.ReadAll(rawResp.Body)
-	if err != nil {
-		return
+	respBytes, ioErr := io.ReadAll(rawResp.Body)
+	if ioErr != nil {
+		return nil, ioErr
 	}
 
 	// We check if it is an OK response code
@@ -130,7 +130,7 @@ func doRequest[T any](method string, url string, body any) (resp *T, err error) 
 		// It wasn't, we need to deserialize the response to the default one and return the message
 		// in the form of an error
 		var defaultResp *DefaultResponse
-		err := json.Unmarshal(respBytes, &defaultResp)
+		err = json.Unmarshal(respBytes, &defaultResp)
 		if err != nil {
 			return
 		}
