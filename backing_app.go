@@ -2,6 +2,7 @@ package authware
 
 import "time"
 
+// backingApp is the backend app type that is used to deserialize the app details to
 type backingApp struct {
 	Name                        string    `json:"name"`
 	Id                          string    `json:"id"`

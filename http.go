@@ -48,6 +48,7 @@ func addAuthenticationToken(token string) {
 	application.AuthToken = token
 }
 
+// addApplication will add an application struct into the backing store for the HTTP client
 func addApplication(app *Application) {
 	application = app
 }

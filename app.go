@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Application is the main representation of an Authware application
 type Application struct {
 	AuthToken                   string        // AuthToken is the current users authorization token
 	Version                     string        // Version is the current local version of the application
@@ -19,7 +20,18 @@ type Application struct {
 	initialized                 bool          // initialized is a flag whether the application has been initialized properly or not
 }
 
-// InitializeApplication will gather the detailed information about the app and get it ready for usage with Authware, it is mandatory that you call this method before you use any Authware API call
+// NewApplication will take in an ID and version string, create an application and automatically initialize it
+func NewApplication(id string, version string) (*Application, error) {
+	app := Application{Id: id, Version: version}
+	err := app.InitializeApplication()
+	if err != nil {
+		return nil, err
+	}
+
+	return &app, err
+}
+
+// InitializeApplication will perform one-time initialization tasks for the application. If NewApplication was called to create the type, then this function does not need to be called
 func (a *Application) InitializeApplication() error {
 	if a.initialized {
 		return AppAlreadyInitialized
@@ -58,6 +70,7 @@ func (a *Application) InitializeApplication() error {
 	return nil
 }
 
+// Authenticate will attempt to authenticate a user based on a username and password, the authentication token will automatically be stored in memory for future authenticated calls
 func (a *Application) Authenticate(username string, password string) error {
 	// Ensure the app is initialized
 	if !a.initialized {
@@ -79,6 +92,7 @@ func (a *Application) Authenticate(username string, password string) error {
 	return nil
 }
 
+// Register will create a new user on the application with the provided username, password, email and token, the new user will not be automatically signed in.
 func (a *Application) Register(username string, password string, email string, token string) error {
 	// Ensure the app is initialized
 	if !a.initialized {
