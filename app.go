@@ -26,6 +26,9 @@ func (a Application) InitializeApplication() error {
 		return BadIdConfiguration
 	}
 
+	// set http backing app
+	addApplication(&a)
+
 	// Make the request to get app info
 	app, err := doRequest[backingApp](http.MethodPost, "app", initForm{Id: a.Id})
 	if err != nil {
@@ -44,6 +47,9 @@ func (a Application) InitializeApplication() error {
 	a.UserCount = &app.UserCount
 	a.RequestCount = &app.RequestCount
 	a.initialized = true
+
+	// reset after done
+	addApplication(&a)
 
 	return nil
 }

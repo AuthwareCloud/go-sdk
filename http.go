@@ -68,6 +68,10 @@ func addAuthenticationToken(token string) {
 	application.AuthToken = token
 }
 
+func addApplication(app *Application) {
+	application = app
+}
+
 // newRequest is a proxy method for the http.NewRequest method that simply adds the Authware specific headers automatically
 func newRequest(method string, url string, body []byte) (req *http.Request, err error) {
 	// Make a reader for the body
