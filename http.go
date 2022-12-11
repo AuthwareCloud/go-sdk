@@ -58,9 +58,9 @@ func newRequest(method string, url string, body []byte) (req *http.Request, err 
 	bodyReader := bytes.NewReader(body)
 
 	// Create a new HTTP request and prepend the base address to the URL
-	rawReq, err := http.NewRequest(method, baseAddress+url, bodyReader)
-	if err != nil {
-		return
+	rawReq, rErr := http.NewRequest(method, baseAddress+url, bodyReader)
+	if rErr != nil {
+		return nil, rErr
 	}
 
 	// Set authorization only if a valid authToken is set
