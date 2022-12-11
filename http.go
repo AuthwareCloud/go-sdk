@@ -7,16 +7,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 )
 
 var (
-	application       *Application                                                     // application will contain the current application and information
-	client            = newClient()                                                    // client is the HTTP request client to send HTTP requests
-	baseAddress       = "https://api.authware.org/"                                    // baseAddress is the address that is prepended to every request URL passed into doRequest
-	cloudflareIssuer  = []byte("CN=Cloudflare Inc ECC CA-3, O=Cloudflare, Inc., C=US") // cloudflareIssuer is the bytes for a valid issuer on a Cloudflare certificate
-	letsEncryptIssuer = []byte(", O=Let's Encrypt, C=US")                              // letsEncryptIssuer is the bytes for a valid issuer on a Let's Encrypt certificate
+	application       *Application                  // application will contain the current application and information
+	client            = newClient()                 // client is the HTTP request client to send HTTP requests
+	baseAddress       = "https://api.authware.org/" // baseAddress is the address that is prepended to every request URL passed into doRequest
+	cloudflareIssuer  = []byte("Cloudflare Inc")    // cloudflareIssuer is the bytes for a valid issuer on a Cloudflare certificate
+	letsEncryptIssuer = []byte("Let's Encrypt")     // letsEncryptIssuer is the bytes for a valid issuer on a Let's Encrypt certificate
 )
 
 // newClient will create a new Go HTTP client to make requests to the Authware API
@@ -30,25 +29,6 @@ func newClient() *http.Client {
 					if !bytes.Contains(state.PeerCertificates[0].RawIssuer, cloudflareIssuer) &&
 						!bytes.Contains(state.PeerCertificates[0].RawIssuer, letsEncryptIssuer) {
 						// Both are not matching, we return the tamperedCertificate error
-						return TamperedCertificate
-					}
-
-					// Now we validate the DNS names (domains) of the certificates
-					validDomain := false
-
-					// Enumerate over every DNS domain in the first peer certificate
-					for _, domain := range state.PeerCertificates[0].PermittedDNSDomains {
-						// If the current enumerated domain contains 'authware.org'
-						if strings.Contains(domain, "authware.org") {
-							// We set the valid domain to true and break out of the loop
-							validDomain = true
-							break
-						}
-					}
-
-					// Now we check whether the domain validity check above passed
-					if !validDomain {
-						// If it didn't, return the tamperedCertificate error
 						return TamperedCertificate
 					}
 
