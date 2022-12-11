@@ -63,6 +63,10 @@ func newRequest(method string, url string, body []byte) (req *http.Request, err 
 		return nil, rErr
 	}
 
+	if body != nil {
+		rawReq.Header.Set("Content-Type", "application/json;charset=utf-8")
+	}
+
 	// Set authorization only if a valid authToken is set
 	if application.AuthToken != "" {
 		rawReq.Header.Set("Authorization", application.AuthToken)
@@ -73,6 +77,7 @@ func newRequest(method string, url string, body []byte) (req *http.Request, err 
 		rawReq.Header.Set("X-Authware-Hardware-ID", application.HardwareIdentifierFunc())
 	}
 
+	rawReq.Header.Set("Accept", "*/*")
 	rawReq.Header.Set("X-Authware-App-Version", application.Version)
 	rawReq.Header.Set("User-Agent", "Authware-Gopher/1.0.0")
 	return rawReq, nil
